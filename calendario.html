@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendario Offseason | Terrassa FC Juvenil C</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --rojo: #C8102E;
+    --azul: #003087;
+    --dorado: #C9A84C;
+    --oscuro: #1a1a1a;
+  }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #000; width: 100vw; height: 100vh; overflow: hidden; }
+
+  .slide { display: none; width: 100vw; height: 100vh; position: absolute; top: 0; left: 0; animation: fadeIn 0.5s ease; }
+  .slide.active { display: flex; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+
+  .nav { position: fixed; bottom: 24px; right: 32px; display: flex; gap: 10px; z-index: 999; }
+  .nav button { background: rgba(255,255,255,0.12); border: 2px solid rgba(255,255,255,0.35); color: #fff; padding: 10px 22px; border-radius: 30px; font-size: 14px; cursor: pointer; transition: all 0.2s; }
+  .nav button:hover { background: var(--dorado); border-color: var(--dorado); color: #000; }
+  .contador { position: fixed; bottom: 32px; left: 32px; color: rgba(255,255,255,0.4); font-size: 13px; z-index: 999; letter-spacing: 1px; }
+
+  .tag { display: inline-block; padding: 5px 16px; border-radius: 20px; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 18px; }
+  .tag-rojo { background: var(--rojo); color: #fff; }
+  .tag-azul { background: var(--azul); color: #fff; }
+  .tag-dorado { background: var(--dorado); color: #000; }
+  .linea { width: 70px; height: 3px; background: var(--dorado); border-radius: 2px; margin: 16px auto; }
+
+  .s1 { background: linear-gradient(135deg, var(--azul) 0%, #001f5c 45%, var(--rojo) 100%); flex-direction: column; align-items: center; justify-content: center; text-align: center; overflow: hidden; position: relative; }
+  .s1 .c1 { position: absolute; width: 550px; height: 550px; border-radius: 50%; border: 70px solid rgba(255,255,255,0.05); top: -160px; right: -140px; }
+  .s1 .c2 { position: absolute; width: 350px; height: 350px; border-radius: 50%; border: 50px solid rgba(255,255,255,0.04); bottom: -90px; left: -90px; }
+  .s1 .club { font-size: 13px; letter-spacing: 5px; color: var(--dorado); text-transform: uppercase; position: relative; }
+  .s1 h1 { font-size: 60px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 4px 20px rgba(0,0,0,0.4); line-height: 1; margin-top: 10px; position: relative; }
+  .s1 .temp { font-size: 22px; color: var(--dorado); font-weight: 700; letter-spacing: 4px; margin-top: 14px; position: relative; }
+  .s1 .rango { font-size: 24px; color: #fff; font-weight: 700; margin-top: 28px; position: relative; }
+  .s1 .semanas { font-size: 12px; color: rgba(255,255,255,0.55); letter-spacing: 3px; text-transform: uppercase; margin-top: 6px; position: relative; }
+  .s1 .frase { margin-top: 36px; font-size: 17px; color: #fff; font-style: italic; font-weight: 300; position: relative; max-width: 620px; }
+  .s1 .frase strong { color: var(--dorado); font-style: normal; font-weight: 800; }
+  .s1 .tec { margin-top: 26px; font-size: 12px; color: rgba(255,255,255,0.5); letter-spacing: 2px; text-transform: uppercase; position: relative; }
+
+  .s2 { background: #fff; flex-direction: column; align-items: center; justify-content: center; padding: 50px 80px; }
+  .s2 h2 { font-size: 42px; font-weight: 900; color: var(--oscuro); margin-bottom: 6px; text-align: center; }
+  .s2 h2 em { color: var(--azul); font-style: normal; }
+  .s2 .sub { font-size: 13px; color: #aaa; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 32px; text-align: center; }
+  .sem-list { display: flex; flex-direction: column; gap: 14px; max-width: 820px; width: 100%; }
+  .sem-item { background: #f5f5f5; border-radius: 12px; padding: 18px 24px; display: flex; align-items: center; gap: 20px; }
+  .sem-item .barra { width: 6px; align-self: stretch; border-radius: 4px; flex-shrink: 0; }
+  .sem-item.l .barra { background: var(--rojo); }
+  .sem-item.m .barra { background: var(--azul); }
+  .sem-item.v .barra { background: var(--dorado); }
+  .sem-item.f .barra { background: var(--oscuro); }
+  .sem-item .dia { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; width: 130px; flex-shrink: 0; }
+  .sem-item.l .dia { color: var(--rojo); }
+  .sem-item.m .dia { color: var(--azul); }
+  .sem-item.v .dia { color: #8a6e1f; }
+  .sem-item.f .dia { color: var(--oscuro); }
+  .sem-item .txt h4 { font-size: 16px; font-weight: 800; color: var(--oscuro); margin-bottom: 3px; }
+  .sem-item .txt p { font-size: 13px; color: #666; line-height: 1.4; }
+  .s2 .pie { margin-top: 26px; font-size: 13px; color: #999; font-style: italic; }
+
+  .fb-slide { flex-direction: column; align-items: center; justify-content: flex-start; padding: 30px 60px; overflow-y: auto; }
+  .fb-slide.fb1 { background: #fff; }
+  .fb-slide.fb2 { background: #f5f5f5; }
+  .fb-slide h2 { font-size: 38px; font-weight: 900; color: var(--oscuro); margin-bottom: 4px; text-align: center; }
+  .fb-slide h2 em { font-style: normal; }
+  .fb-slide.fb1 h2 em { color: var(--rojo); }
+  .fb-slide.fb2 h2 em { color: var(--azul); }
+  .fb-slide .sub { font-size: 12px; color: #aaa; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; text-align: center; }
+
+  .fb-cat { width: 100%; max-width: 1020px; margin-bottom: 16px; }
+  .fb-cat h3 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; padding-left: 2px; }
+  .fb-cat.dorado h3 { color: #8a6e1f; }
+  .fb-cat.rojo h3   { color: var(--rojo); }
+  .fb-cat.azul h3   { color: var(--azul); }
+  .fb-cat.oscuro h3 { color: var(--oscuro); }
+
+  .fb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+  .ej-card { background: #fff; border: 1px solid #eee; border-radius: 12px; padding: 12px 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); display: flex; flex-direction: column; align-items: center; gap: 5px; }
+  .ej-card .ico { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 19px; margin-bottom: 2px; }
+  .ico-dorado { background: rgba(201,168,76,0.15); }
+  .ico-rojo   { background: rgba(200,16,46,0.1); }
+  .ico-azul   { background: rgba(0,48,135,0.1); }
+  .ico-oscuro { background: rgba(26,26,26,0.08); }
+  .ej-card h4 { font-size: 11px; font-weight: 800; color: var(--oscuro); line-height: 1.25; min-height: 28px; }
+  .ej-card .reps { font-size: 10px; color: #999; font-weight: 700; background: #f5f5f5; padding: 2px 8px; border-radius: 10px; }
+
+  .tabata-box { width: 100%; max-width: 1020px; margin-bottom: 16px; background: var(--oscuro); border-radius: 14px; padding: 22px 26px; }
+  .tabata-box .tab-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+  .tabata-box .tab-header h3 { font-size: 15px; font-weight: 900; color: var(--dorado); text-transform: uppercase; letter-spacing: 1.5px; }
+  .tabata-box .tab-info { font-size: 12.5px; color: rgba(255,255,255,0.6); margin-bottom: 16px; line-height: 1.5; }
+  .tabata-box .tab-info strong { color: #fff; }
+  .tab-explica { background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3); border-radius: 10px; padding: 14px 18px; margin-bottom: 16px; display: flex; align-items: center; gap: 16px; }
+  .tab-explica .tab-e-num { font-size: 26px; font-weight: 900; color: var(--dorado); line-height: 1; flex-shrink: 0; }
+  .tab-explica .tab-e-txt { font-size: 12.5px; color: rgba(255,255,255,0.75); line-height: 1.5; }
+  .tab-explica .tab-e-txt strong { color: var(--dorado); }
+  .tabata-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .tab-ej { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); border-radius: 10px; padding: 14px 10px; text-align: center; }
+  .tab-ej .tab-num { width: 26px; height: 26px; border-radius: 50%; background: var(--dorado); color: #000; font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; }
+  .tab-ej .tab-ico { font-size: 22px; margin-bottom: 6px; }
+  .tab-ej h4 { font-size: 11.5px; font-weight: 800; color: #fff; line-height: 1.3; margin-bottom: 3px; }
+  .tab-ej p { font-size: 10px; color: rgba(255,255,255,0.5); line-height: 1.3; }
+
+  .mes { flex-direction: column; align-items: center; justify-content: center; padding: 40px 60px; }
+  .mes.julio { background: #f5f5f5; }
+  .mes.agosto { background: #eef1f6; }
+  .mes h2 { font-size: 44px; font-weight: 900; color: var(--oscuro); margin-bottom: 4px; }
+  .mes.julio h2 em { color: var(--rojo); font-style: normal; }
+  .mes.agosto h2 em { color: var(--azul); font-style: normal; }
+  .mes .sub { font-size: 13px; color: #aaa; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 24px; }
+  .cal { width: 100%; max-width: 1050px; border-collapse: separate; border-spacing: 6px; }
+  .cal th { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #888; padding: 6px 0; }
+  .cal td { background: #fff; border-radius: 10px; height: 92px; width: 14.28%; vertical-align: top; padding: 8px 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: relative; }
+  .cal td.vacio { background: transparent; box-shadow: none; }
+  .cal td .num { font-size: 15px; font-weight: 800; color: var(--oscuro); }
+  .cal td.finde .num { color: #aaa; }
+  .cal td .ses { font-size: 10.5px; font-weight: 700; line-height: 1.3; margin-top: 6px; padding: 4px 6px; border-radius: 6px; }
+  .ses.fb1 { background: rgba(200,16,46,0.1); color: var(--rojo); }
+  .ses.fb2 { background: rgba(0,48,135,0.1); color: var(--azul); }
+  .ses.run { background: rgba(201,168,76,0.18); color: #8a6e1f; }
+  .ses.act { background: rgba(26,26,26,0.07); color: #444; }
+  .cal td .borde-top { position: absolute; top: 0; left: 0; right: 0; height: 4px; border-radius: 10px 10px 0 0; }
+  .bt-rojo { background: var(--rojo); }
+  .bt-azul { background: var(--azul); }
+  .bt-dorado { background: var(--dorado); }
+  .mes .leyenda { display: flex; gap: 22px; margin-top: 20px; flex-wrap: wrap; justify-content: center; }
+  .leyenda .li { display: flex; align-items: center; gap: 7px; font-size: 12px; color: #555; font-weight: 600; }
+  .leyenda .dot { width: 12px; height: 12px; border-radius: 3px; }
+
+  .s-fin { background: var(--oscuro); flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px; position: relative; overflow: hidden; }
+  .s-fin::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,48,135,0.25) 0%, transparent 68%); pointer-events: none; }
+  .s-fin .linea-c { width: 90px; height: 4px; background: var(--dorado); border-radius: 2px; margin-bottom: 32px; position: relative; }
+  .s-fin h2 { font-size: 40px; font-weight: 900; color: #fff; line-height: 1.2; max-width: 760px; position: relative; margin-bottom: 18px; }
+  .s-fin h2 em { color: var(--dorado); font-style: normal; }
+  .s-fin .sub { font-size: 16px; color: rgba(255,255,255,0.55); position: relative; margin-bottom: 30px; line-height: 1.6; max-width: 620px; }
+  .s-fin .firma { font-size: 12px; color: rgba(255,255,255,0.3); letter-spacing: 3px; text-transform: uppercase; position: relative; }
+  .s-fin .firma em { color: var(--dorado); font-style: normal; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<div class="slide s1 active">
+  <div class="c1"></div>
+  <div class="c2"></div>
+  <div class="club">Terrassa FC · Juvenil C</div>
+  <h1>Calendario<br>Offseason</h1>
+  <div class="temp">TEMPORADA 26/27</div>
+  <div class="rango">6 de Julio — 17 de Agosto</div>
+  <div class="semanas">6 semanas de trabajo</div>
+  <div class="frase">El descanso se gana entrenando. <strong>El verano construye a la jugadora que serás en septiembre.</strong></div>
+  <div class="tec">Lucio Mongelli Gutés · Entrenador Principal</div>
+</div>
+
+<div class="slide s2">
+  <h2>Cómo funciona <em>la semana</em></h2>
+  <div class="sub">Tu rutina durante las 6 semanas</div>
+  <div class="sem-list">
+    <div class="sem-item l">
+      <div class="barra"></div>
+      <div class="dia">Lunes</div>
+      <div class="txt"><h4>Fullbody 1</h4><p>Sesión completa de fuerza. Tren superior, inferior y core.</p></div>
+    </div>
+    <div class="sem-item m">
+      <div class="barra"></div>
+      <div class="dia">Miércoles</div>
+      <div class="txt"><h4>Fullbody 2 + Tabata</h4><p>Segunda sesión de fuerza. Al final, bloque Tabata de alta intensidad.</p></div>
+    </div>
+    <div class="sem-item v">
+      <div class="barra"></div>
+      <div class="dia">Viernes</div>
+      <div class="txt"><h4>Carrera Fartlek · Strava</h4><p>Carrera con cambios de ritmo, registrada en Strava. Cada semana indicaré la sesión concreta.</p></div>
+    </div>
+    <div class="sem-item f">
+      <div class="barra"></div>
+      <div class="dia">Fin de semana</div>
+      <div class="txt"><h4>Actividad libre (opcional)</h4><p>Piscina, playa, natación, pachanga de fútbol... Libre y opcional, pero suma mucho.</p></div>
+    </div>
+  </div>
+  <div class="pie">Constancia &gt; intensidad puntual. Lo importante es no parar.</div>
+</div>
+
+<div class="slide fb-slide fb1">
+  <span class="tag tag-rojo">Sesión Lunes</span>
+  <h2><em>Fullbody</em> 1</h2>
+  <div class="sub">Fuerza · Potencia</div>
+
+  <div class="fb-cat dorado">
+    <h3>Activación</h3>
+    <div class="fb-grid">
+      <div class="ej-card"><div class="ico ico-dorado">🐛</div><h4>Dead bug contralateral</h4><div class="reps">1 serie · 5@</div></div>
+      <div class="ej-card"><div class="ico ico-dorado">🧍</div><h4>Press Pallof dinámico en bipedestación</h4><div class="reps">1 serie · 10-12@</div></div>
+      <div class="ej-card"><div class="ico ico-dorado">↗️</div><h4>Activación glúteo en desplazamiento diagonal</h4><div class="reps">1 serie · 3-4 pasos@</div></div>
+      <div class="ej-card"><div class="ico ico-dorado">🦘</div><h4>Sentadilla con salto</h4><div class="reps">1 serie · 8-10</div></div>
+    </div>
+  </div>
+
+  <div class="fb-cat rojo">
+    <h3>Fuerza tren inferior</h3>
+    <div class="fb-grid">
+      <div class="ej-card"><div class="ico ico-rojo">🏋️</div><h4>Sentadilla trasera barra alta</h4><div class="reps">4 series · 4 (V)</div></div>
+      <div class="ej-card"><div class="ico ico-rojo">📦</div><h4>Box Jump</h4><div class="reps">4 series · 4 (V)</div></div>
+      <div class="ej-card"><div class="ico ico-rojo">⬆️</div><h4>Saltos verticales con peso</h4><div class="reps">4 series · 4 (V)</div></div>
+      <div class="ej-card"><div class="ico ico-rojo">🔗</div><h4>1/2 Sentadilla con salto TRX</h4><div class="reps">4 series · 4 (V)</div></div>
+      <div class="ej-card"><div class="ico ico-rojo">🎗️</div><h4>Banded Assisted Jumps</h4><div class="reps">4 series · 4 (V)</div></div>
+    </div>
+  </div>
+
+  <div class="fb-cat azul">
+    <h3>Fuerza tren superior</h3>
+    <div class="fb-grid">
+      <div class="ej-card"><div class="ico ico-azul">🏋️‍♀️</div><h4>Press inclinado mancuernas</h4><div class="reps">3 series · 6-8 (V)</div></div>
+      <div class="ej-card"><div class="ico ico-azul">💪</div><h4>Flexión (Push-up)</h4><div class="reps">3 series · 8-12 (V)</div></div>
+      <div class="ej-card"><div class="ico ico-azul">🚣</div><h4>Remo polea posición caballero</h4><div class="reps">3 series · 8-10 (V)</div></div>
+      <div class="ej-card"><div class="ico ico-azul">🚣‍♂️</div><h4>Remo declinado prono TRX</h4><div class="reps">3 series · 10 (V)</div></div>
+    </div>
+  </div>
+
+  <div class="fb-cat oscuro">
+    <h3>Complementos</h3>
+    <div class="fb-grid">
+      <div class="ej-card"><div class="ico ico-oscuro">🍑</div><h4>Hip Thrust unilateral con KB</h4><div class="reps">3 series · 6-8 (V)</div></div>
+      <div class="ej-card"><div class="ico ico-oscuro">🔺</div><h4>TRX "Y" Snatch</h4><div class="reps">3 series · 10 (V)</div></div>
+      <div class="ej-card"><div class="ico ico-oscuro">🧘</div><h4>Plancha lateral isométrica con codo</h4><div class="reps">3 series · 10"@ (V)</div></div>
+      <div class="ej-card"><div class="ico ico-oscuro">🔻</div><h4>Push Up to Pike</h4><div class="reps">3 series · 10 (V)</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide fb-slide fb2">
+  <span class="tag tag-azul">Sesión Miércoles</span>
+  <h2><em>Fullbody</em> 2</h2>
+  <div class="sub">Fuerza · Potencia + Tabata</div>
+
+  <div class="fb-cat dorado">
+    <h3>Activación</h3>
+    <div class="fb-grid">
+      <div class="ej-card"><div class="ico ico-dorado">🐛</div><h4>Dead bug + crunch</h4><div class="reps">1 serie · 10</div></div>
+      <div class="ej-card"><div class="ico ico-dorado">🌉</div><h4>Puente de glúteo unilateral con KB</h4><div class="reps">1 serie · 10@</div></div>
+      <div class="ej-card"><div class="ico ico-dorado">🧍</div><h4>Press Pallof con flexo-extensión</h4><div class="reps">1 serie · 5@</div></div>
+      <div class="ej-card"><div class="ico ico-dorado">🦘</div><h4>Sentadilla completa con salto TRX</h4><div class="reps">1 serie · 10</div></div>
+    </div>
+  </div>
+
+  <div class="fb-cat rojo">
+    <h3>Fuerza Fullbody 1</h3>
+    <div class="fb-grid">
+      <div class="ej-card"><div class="ico ico-rojo">🏋️</div><h4>Sentadilla frontal (Front Sq)</h4><div class="reps">4 series · 4 (V)</div></div>
+      <div class="ej-card"><div class="ico ico-rojo">📦</div><h4>Salto al cajón mediano + caída</h4><div class="reps">4 series · 4 (V)</div></div>
+      <div class="ej-card"><div class="ico ico-rojo">🙆</div><h4>Elevaciones laterales</h4><div class="reps">4 series · 8</div></div>
+      <div class="ej-card"><div class="ico ico-rojo">💪</div><h4>Curl bíceps unilateral con KB</h4><div class="reps">4 series · 12</div></div>
+    </div>
+  </div>
+
+  <div class="fb-cat azul">
+    <h3>Fuerza Fullbody 2</h3>
+    <div class="fb-grid">
+      <div class="ej-card"><div class="ico ico-azul">🏋️‍♂️</div><h4>Kettlebell swing</h4><div class="reps">3 series · 10-12 (V)</div></div>
+      <div class="ej-card"><div class="ico ico-azul">🦵</div><h4>Sentadilla búlgara con 2 mancuernas</h4><div class="reps">3 series · 8@ (V)</div></div>
+      <div class="ej-card"><div class="ico ico-azul">🧗</div><h4>Dominadas (Pull-up)</h4><div class="reps">3 series · 6-8 (V)</div></div>
+    </div>
+  </div>
+
+  <div class="tabata-box">
+    <div class="tab-header">
+      <h3>⚡ Tabata final</h3>
+    </div>
+    <div class="tab-info">
+      Completa <strong>4 series de 4 minutos</strong> cada una. Descansa <strong>1 minuto</strong> entre cada ejercicio.
+    </div>
+    <div class="tab-explica">
+      <div class="tab-e-num">20"/10"</div>
+      <div class="tab-e-txt">
+        <strong>Así se estructura cada serie de 4 minutos:</strong><br>
+        20 segundos de esfuerzo máximo + 10 segundos de descanso, repetido <strong>8 veces seguidas</strong> (8 rondas = 4 minutos). Al terminar la serie, descansa 1 minuto completo antes de pasar al siguiente ejercicio.
+      </div>
+    </div>
+    <div class="tabata-grid">
+      <div class="tab-ej">
+        <div class="tab-num">1</div>
+        <div class="tab-ico">🦘</div>
+        <h4>Sentadillas con salto</h4>
+        <p>(o normales si eres principiante)</p>
+      </div>
+      <div class="tab-ej">
+        <div class="tab-num">2</div>
+        <div class="tab-ico">💪</div>
+        <h4>Flexiones</h4>
+        <p>(puedes apoyar las rodillas)</p>
+      </div>
+      <div class="tab-ej">
+        <div class="tab-num">3</div>
+        <div class="tab-ico">🧗</div>
+        <h4>Escaladores</h4>
+        <p>(Mountain Climbers)</p>
+      </div>
+      <div class="tab-ej">
+        <div class="tab-num">4</div>
+        <div class="tab-ico">🔥</div>
+        <h4>Burpees</h4>
+        <p></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="fb-cat oscuro">
+    <h3>Complementos</h3>
+    <div class="fb-grid">
+      <div class="ej-card"><div class="ico ico-oscuro">🦵</div><h4>Copenhague isométrico codo y pie + extensión</h4><div class="reps">4 series · 20"@ (V)</div></div>
+      <div class="ej-card"><div class="ico ico-oscuro">🌉</div><h4>Pallof press + puente glúteo 1 pierna</h4><div class="reps">4 series · 20@ (V)</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="slide mes julio">
+  <h2><em>Julio</em></h2>
+  <div class="sub">Semanas 1 a 4 · Arranque del offseason</div>
+  <table class="cal">
+    <tr><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Sáb</th><th>Dom</th></tr>
+    <tr>
+      <td><div class="borde-top bt-rojo"></div><div class="num">6</div><div class="ses fb1">Fullbody 1</div></td>
+      <td><div class="num">7</div></td>
+      <td><div class="borde-top bt-azul"></div><div class="num">8</div><div class="ses fb2">Fullbody 2 + Tabata</div></td>
+      <td><div class="num">9</div></td>
+      <td><div class="borde-top bt-dorado"></div><div class="num">10</div><div class="ses run">Carrera Fartlek</div></td>
+      <td class="finde"><div class="num">11</div><div class="ses act">Actividad</div></td>
+      <td class="finde"><div class="num">12</div><div class="ses act">Actividad</div></td>
+    </tr>
+    <tr>
+      <td><div class="borde-top bt-rojo"></div><div class="num">13</div><div class="ses fb1">Fullbody 1</div></td>
+      <td><div class="num">14</div></td>
+      <td><div class="borde-top bt-azul"></div><div class="num">15</div><div class="ses fb2">Fullbody 2 + Tabata</div></td>
+      <td><div class="num">16</div></td>
+      <td><div class="borde-top bt-dorado"></div><div class="num">17</div><div class="ses run">Carrera Fartlek</div></td>
+      <td class="finde"><div class="num">18</div><div class="ses act">Actividad</div></td>
+      <td class="finde"><div class="num">19</div><div class="ses act">Actividad</div></td>
+    </tr>
+    <tr>
+      <td><div class="borde-top bt-rojo"></div><div class="num">20</div><div class="ses fb1">Fullbody 1</div></td>
+      <td><div class="num">21</div></td>
+      <td><div class="borde-top bt-azul"></div><div class="num">22</div><div class="ses fb2">Fullbody 2 + Tabata</div></td>
+      <td><div class="num">23</div></td>
+      <td><div class="borde-top bt-dorado"></div><div class="num">24</div><div class="ses run">Carrera Fartlek</div></td>
+      <td class="finde"><div class="num">25</div><div class="ses act">Actividad</div></td>
+      <td class="finde"><div class="num">26</div><div class="ses act">Actividad</div></td>
+    </tr>
+    <tr>
+      <td><div class="borde-top bt-rojo"></div><div class="num">27</div><div class="ses fb1">Fullbody 1</div></td>
+      <td><div class="num">28</div></td>
+      <td><div class="borde-top bt-azul"></div><div class="num">29</div><div class="ses fb2">Fullbody 2 + Tabata</div></td>
+      <td><div class="num">30</div></td>
+      <td><div class="borde-top bt-dorado"></div><div class="num">31</div><div class="ses run">Carrera Fartlek</div></td>
+      <td class="vacio"></td>
+      <td class="vacio"></td>
+    </tr>
+  </table>
+  <div class="leyenda">
+    <div class="li"><span class="dot" style="background:var(--rojo)"></span>Fullbody 1</div>
+    <div class="li"><span class="dot" style="background:var(--azul)"></span>Fullbody 2 + Tabata</div>
+    <div class="li"><span class="dot" style="background:var(--dorado)"></span>Carrera Fartlek (Strava)</div>
+    <div class="li"><span class="dot" style="background:var(--oscuro)"></span>Actividad libre</div>
+  </div>
+</div>
+
+<div class="slide mes agosto">
+  <h2><em>Agosto</em></h2>
+  <div class="sub">Semanas 5 y 6 · Recta final hasta el 17</div>
+  <table class="cal">
+    <tr><th>Lun</th><th>Mar</th><th>Mié</th><th>Jue</th><th>Vie</th><th>Sáb</th><th>Dom</th></tr>
+    <tr>
+      <td class="vacio"></td>
+      <td class="vacio"></td>
+      <td class="vacio"></td>
+      <td class="vacio"></td>
+      <td class="vacio"></td>
+      <td class="finde"><div class="num">1</div><div class="ses act">Actividad</div></td>
+      <td class="finde"><div class="num">2</div><div class="ses act">Actividad</div></td>
+    </tr>
+    <tr>
+      <td><div class="borde-top bt-rojo"></div><div class="num">3</div><div class="ses fb1">Fullbody 1</div></td>
+      <td><div class="num">4</div></td>
+      <td><div class="borde-top bt-azul"></div><div class="num">5</div><div class="ses fb2">Fullbody 2 + Tabata</div></td>
+      <td><div class="num">6</div></td>
+      <td><div class="borde-top bt-dorado"></div><div class="num">7</div><div class="ses run">Carrera Fartlek</div></td>
+      <td class="finde"><div class="num">8</div><div class="ses act">Actividad</div></td>
+      <td class="finde"><div class="num">9</div><div class="ses act">Actividad</div></td>
+    </tr>
+    <tr>
+      <td><div class="borde-top bt-rojo"></div><div class="num">10</div><div class="ses fb1">Fullbody 1</div></td>
+      <td><div class="num">11</div></td>
+      <td><div class="borde-top bt-azul"></div><div class="num">12</div><div class="ses fb2">Fullbody 2 + Tabata</div></td>
+      <td><div class="num">13</div></td>
+      <td><div class="borde-top bt-dorado"></div><div class="num">14</div><div class="ses run">Carrera Fartlek</div></td>
+      <td class="finde"><div class="num">15</div><div class="ses act">Actividad</div></td>
+      <td class="finde"><div class="num">16</div><div class="ses act">Actividad</div></td>
+    </tr>
+    <tr>
+      <td class="vacio"></td>
+      <td class="vacio"></td>
+      <td class="vacio"></td>
+      <td class="vacio"></td>
+      <td class="vacio"></td>
+      <td class="vacio"></td>
+      <td class="finde" style="background:rgba(201,168,76,0.15);"><div class="num" style="color:#8a6e1f">17</div><div class="ses" style="background:var(--dorado);color:#000;font-weight:800;">¡Fin del offseason!</div></td>
+    </tr>
+  </table>
+  <div class="leyenda">
+    <div class="li"><span class="dot" style="background:var(--rojo)"></span>Fullbody 1</div>
+    <div class="li"><span class="dot" style="background:var(--azul)"></span>Fullbody 2 + Tabata</div>
+    <div class="li"><span class="dot" style="background:var(--dorado)"></span>Carrera Fartlek (Strava)</div>
+    <div class="li"><span class="dot" style="background:var(--oscuro)"></span>Actividad libre</div>
+  </div>
+</div>
+
+<div class="slide s-fin">
+  <div class="linea-c"></div>
+  <h2>El trabajo de hoy es la <em>diferencia</em> de mañana.</h2>
+  <div class="sub">Nadie ve el verano que haces. Pero todas verán a la jugadora que vuelve en septiembre.</div>
+  <div class="firma">Terrassa FC Juvenil C · Offseason 26/27 · <em>Lucio Mongelli Gutés</em></div>
+</div>
+
+<div class="nav">
+  <button onclick="cambiar(-1)">← Anterior</button>
+  <button onclick="cambiar(1)">Siguiente →</button>
+</div>
+<div class="contador" id="cnt">1 / 7</div>
+
+<script>
+  let i = 0;
+  const s = document.querySelectorAll('.slide');
+  const t = s.length;
+  function cambiar(d) {
+    s[i].classList.remove('active');
+    i = (i + d + t) % t;
+    s[i].classList.add('active');
+    document.getElementById('cnt').textContent = (i+1) + ' / ' + t;
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') cambiar(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   cambiar(-1);
+  });
+</script>
+
+</body>
+</html>
