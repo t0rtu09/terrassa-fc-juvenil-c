@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terrassa FC Juvenil C | Temporada 26/27</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --rojo: #C8102E;
+    --azul: #003087;
+    --blanco: #FFFFFF;
+    --dorado: #C9A84C;
+    --oscuro: #1a1a1a;
+  }
+
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #000;
+    width: 100vw; height: 100vh;
+    overflow: hidden;
+  }
+
+  .slide {
+    display: none;
+    width: 100vw; height: 100vh;
+    position: absolute; top: 0; left: 0;
+    animation: fadeIn 0.5s ease;
+  }
+  .slide.active { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .nav {
+    position: fixed; bottom: 24px; right: 32px;
+    display: flex; gap: 10px; z-index: 999;
+  }
+  .nav button {
+    background: rgba(255,255,255,0.12);
+    border: 2px solid rgba(255,255,255,0.35);
+    color: #fff; padding: 10px 22px;
+    border-radius: 30px; font-size: 14px;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .nav button:hover { background: var(--dorado); border-color: var(--dorado); color: #000; }
+
+  .contador {
+    position: fixed; bottom: 32px; left: 32px;
+    color: rgba(255,255,255,0.4); font-size: 13px;
+    z-index: 999; letter-spacing: 1px;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 5px 16px; border-radius: 20px;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 3px; text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+  .tag-rojo   { background: var(--rojo); color: #fff; }
+  .tag-azul   { background: var(--azul); color: #fff; }
+  .tag-dorado { background: var(--dorado); color: #000; }
+
+  .linea { width: 70px; height: 3px; background: var(--dorado); border-radius: 2px; margin: 16px auto; }
+
+  .s1 {
+    background: linear-gradient(135deg, var(--rojo) 0%, #7a0018 45%, var(--azul) 100%);
+    flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; overflow: hidden; position: relative;
+  }
+  .s1 .c1, .s26 .c1 { position: absolute; width: 550px; height: 550px; border-radius: 50%; border: 70px solid rgba(255,255,255,0.05); top: -160px; right: -140px; }
+  .s1 .c2, .s26 .c2 { position: absolute; width: 350px; height: 350px; border-radius: 50%; border: 50px solid rgba(255,255,255,0.04); bottom: -90px; left: -90px; }
+  .s1 img { width: 120px; margin-bottom: 22px; filter: drop-shadow(0 6px 20px rgba(0,0,0,0.5)); }
+  .s1 .club { font-size: 13px; letter-spacing: 5px; color: var(--dorado); text-transform: uppercase; }
+  .s1 h1 { font-size: 68px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 4px 20px rgba(0,0,0,0.4); line-height: 1; margin-top: 6px; }
+  .s1 .temp { font-size: 26px; color: var(--dorado); font-weight: 700; letter-spacing: 4px; margin-top: 14px; }
+  .s1 .tec { margin-top: 28px; font-size: 14px; color: rgba(255,255,255,0.6); letter-spacing: 2px; text-transform: uppercase; }
+  .s1 .tec strong { color: #fff; }
+
+  .s2 { background: #fff; flex-direction: row; overflow: hidden; }
+  .s2 .br { width: 10px; background: var(--rojo); flex-shrink: 0; }
+  .s2 .ba { width: 5px; background: var(--azul); flex-shrink: 0; }
+  .s2 .texto { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 60px 70px; }
+  .s2 h2 { font-size: 50px; font-weight: 900; color: var(--oscuro); line-height: 1.1; margin-bottom: 20px; }
+  .s2 h2 em { color: var(--rojo); font-style: normal; }
+  .s2 p { font-size: 18px; color: #444; line-height: 1.75; max-width: 560px; }
+  .s2 p strong { color: var(--azul); }
+  .s2 .firma { margin-top: 32px; font-size: 15px; color: #999; font-style: italic; }
+  .s2 .firma strong { color: var(--rojo); font-style: normal; }
+  .s2 .panel { width: 280px; flex-shrink: 0; background: linear-gradient(160deg, var(--rojo), var(--azul)); display: flex; align-items: center; justify-content: center; }
+  .s2 .panel img { width: 120px; filter: drop-shadow(0 6px 20px rgba(0,0,0,0.35)); }
+
+  .s3 { background: var(--azul); flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px; overflow: hidden; position: relative; }
+  .s3 .c1 { position: absolute; width: 480px; height: 480px; border-radius: 50%; background: rgba(255,255,255,0.04); top: -180px; right: -80px; }
+  .s3 h2 { font-size: 50px; font-weight: 900; color: #fff; margin-bottom: 10px; }
+  .s3 .sub { font-size: 15px; color: rgba(255,255,255,0.5); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 44px; }
+  .s3 .cards { display: grid; grid-template-columns: repeat(3,1fr); gap: 22px; max-width: 780px; width: 100%; }
+  .s3 .card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: 16px; padding: 30px 20px; }
+  .s3 .card .n { font-size: 54px; font-weight: 900; color: var(--dorado); line-height: 1; }
+  .s3 .card .l { font-size: 12px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 2px; margin-top: 8px; }
+
+  .s4 { background: #fff; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 50px 80px; }
+  .s4 h2 { font-size: 44px; font-weight: 900; color: var(--oscuro); margin-bottom: 8px; }
+  .s4 h2 em { color: var(--rojo); font-style: normal; }
+  .s4 .sub { font-size: 13px; color: #aaa; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 36px; }
+  .piramide { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; max-width: 820px; }
+  .nivel { display: flex; align-items: center; justify-content: space-between; border-radius: 12px; padding: 16px 28px; box-shadow: 0 4px 14px rgba(0,0,0,0.1); }
+  .nivel.dh   { background: var(--dorado); color: #000; width: 48%; }
+  .nivel.pref { background: var(--rojo);   color: #fff; width: 70%; }
+  .nivel.prim { background: var(--azul);   color: #fff; width: 100%; }
+  .nivel .nn { font-size: 17px; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+  .nivel .nd { font-size: 12px; opacity: 0.8; margin-top: 2px; }
+  .nivel .num { font-size: 24px; font-weight: 900; }
+  .nota-est { margin-top: 22px; padding: 12px 22px; border-radius: 10px; background: rgba(0,48,135,0.07); border: 1px solid rgba(0,48,135,0.18); font-size: 14px; color: #444; max-width: 660px; line-height: 1.6; }
+  .nota-est strong { color: var(--azul); }
+
+  .s5 { background: #f6f6f6; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 50px 80px; }
+  .s5 h2 { font-size: 44px; font-weight: 900; color: var(--oscuro); margin-bottom: 8px; }
+  .s5 h2 em { color: var(--azul); font-style: normal; }
+  .s5 .sub { font-size: 13px; color: #aaa; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 34px; }
+  .obj-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; max-width: 980px; width: 100%; }
+  .obj { background: #fff; border-radius: 16px; padding: 28px 20px; box-shadow: 0 6px 24px rgba(0,0,0,0.07); display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .obj.ja { border-top: 5px solid var(--dorado); }
+  .obj.jb { border-top: 5px solid var(--rojo); }
+  .obj.jc { border-top: 5px solid var(--azul); }
+  .obj .etq { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: #bbb; }
+  .obj .nom { font-size: 19px; font-weight: 900; color: var(--oscuro); }
+  .obj .flecha { font-size: 28px; line-height: 1; }
+  .obj.ja .flecha { color: var(--dorado); }
+  .obj.jb .flecha { color: var(--rojo); }
+  .obj.jc .flecha { color: var(--azul); }
+  .obj .meta { font-size: 20px; font-weight: 900; }
+  .obj.ja .meta { color: var(--dorado); }
+  .obj.jb .meta { color: var(--rojo); }
+  .obj.jc .meta { color: var(--azul); }
+  .obj .desc { font-size: 13px; color: #777; line-height: 1.5; text-align: center; }
+  .clave { margin-top: 22px; background: #fff; border: 2px dashed var(--azul); border-radius: 12px; padding: 14px 26px; max-width: 760px; font-size: 14px; color: #333; line-height: 1.6; }
+  .clave strong { color: var(--azul); }
+
+  .s6 { background: #f5f5f5; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 50px 60px; }
+  .s6 h2 { font-size: 44px; font-weight: 900; color: var(--oscuro); margin-bottom: 8px; }
+  .s6 h2 em { color: var(--rojo); font-style: normal; }
+  .s6 .sub { font-size: 13px; color: #aaa; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 38px; }
+  .pilares { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; max-width: 940px; width: 100%; }
+  .pilar { background: #fff; border-radius: 18px; padding: 34px 24px; box-shadow: 0 6px 28px rgba(0,0,0,0.07); transition: transform 0.2s; }
+  .pilar:hover { transform: translateY(-5px); }
+  .pilar.p1 { border-top: 5px solid var(--rojo); }
+  .pilar.p2 { border-top: 5px solid var(--azul); }
+  .pilar.p3 { border-top: 5px solid var(--dorado); }
+  .pilar .ico { font-size: 44px; margin-bottom: 14px; }
+  .pilar h3 { font-size: 19px; font-weight: 800; color: var(--oscuro); text-transform: uppercase; margin-bottom: 10px; }
+  .pilar p { font-size: 14px; color: #666; line-height: 1.6; }
+
+  .pilar-slide { flex-direction: column; align-items: flex-start; justify-content: center; padding: 80px 100px; position: relative; overflow: hidden; }
+  .pilar-slide.ps1 { background: linear-gradient(135deg, var(--rojo), #7a0018); }
+  .pilar-slide.ps2 { background: linear-gradient(135deg, var(--azul), #001f5c); }
+  .pilar-slide.ps3 { background: linear-gradient(135deg, #111, #2a2a2a); }
+  .pilar-slide .num-bg { position: absolute; right: 60px; bottom: -20px; font-size: 200px; font-weight: 900; color: rgba(255,255,255,0.06); line-height: 1; pointer-events: none; }
+  .pilar-slide h2 { font-size: 52px; font-weight: 900; color: #fff; text-transform: uppercase; line-height: 1.1; margin-bottom: 8px; }
+  .pilar-slide .sub { font-size: 14px; color: rgba(255,255,255,0.5); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 36px; }
+  .pills { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; max-width: 680px; }
+  .pill { background: rgba(255,255,255,0.11); border: 1px solid rgba(255,255,255,0.18); border-radius: 12px; padding: 16px 22px; display: flex; align-items: center; gap: 12px; }
+  .pill .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--dorado); flex-shrink: 0; }
+  .pill span { color: #fff; font-size: 15px; font-weight: 600; }
+  .frase-box { background: var(--rojo); border-radius: 14px; padding: 24px 32px; max-width: 660px; margin-bottom: 24px; }
+  .frase-box p { font-size: 18px; color: #fff; font-weight: 700; line-height: 1.5; }
+
+  .s10 { background: #fff; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px; }
+  .s10 h2 { font-size: 44px; font-weight: 900; color: var(--oscuro); margin-bottom: 8px; }
+  .s10 h2 em { color: var(--azul); font-style: normal; }
+  .s10 .sub { font-size: 13px; color: #aaa; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 44px; }
+  .valores { display: flex; gap: 18px; max-width: 980px; width: 100%; }
+  .val { flex: 1; border-radius: 16px; padding: 30px 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; transition: transform 0.2s; }
+  .val:hover { transform: translateY(-5px); }
+  .val:nth-child(1) { background: var(--rojo); }
+  .val:nth-child(2) { background: var(--azul); }
+  .val:nth-child(3) { background: var(--oscuro); }
+  .val:nth-child(4) { background: var(--rojo); }
+  .val:nth-child(5) { background: var(--azul); }
+  .val .vi { font-size: 34px; }
+  .val .vn { font-size: 12px; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 1px; text-align: center; }
+
+  .s11 { background: linear-gradient(135deg, var(--rojo), #6B0000); flex-direction: row; overflow: hidden; }
+  .s11 .izq { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 80px; }
+  .s11 h2 { font-size: 46px; font-weight: 900; color: #fff; text-transform: uppercase; margin-bottom: 6px; }
+  .s11 .nombre { font-size: 24px; color: var(--dorado); font-weight: 700; margin-bottom: 32px; }
+  .s11 .frase { font-size: 20px; color: #fff; line-height: 1.65; font-weight: 300; border-left: 4px solid var(--dorado); padding-left: 22px; max-width: 500px; }
+  .s11 .frase strong { font-weight: 800; color: var(--dorado); }
+  .s11 .der { width: 300px; flex-shrink: 0; background: rgba(0,0,0,0.2); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 40px; }
+  .s11 .der img { width: 120px; filter: drop-shadow(0 6px 20px rgba(0,0,0,0.3)); }
+  .s11 .der .rol { font-size: 11px; color: rgba(255,255,255,0.45); letter-spacing: 3px; text-transform: uppercase; text-align: center; }
+
+  .s12 { background: #f5f5f5; flex-direction: column; align-items: center; justify-content: center; padding: 46px 80px; }
+  .s12 h2 { font-size: 42px; font-weight: 900; color: var(--oscuro); margin-bottom: 6px; text-align: center; }
+  .s12 h2 em { color: var(--rojo); font-style: normal; }
+  .s12 .sub { font-size: 13px; color: #aaa; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; text-align: center; }
+  .compromisos { display: grid; grid-template-columns: repeat(2,1fr); gap: 13px; max-width: 900px; width: 100%; }
+  .comp { background: #fff; border-radius: 12px; padding: 18px 22px; display: flex; align-items: flex-start; gap: 14px; box-shadow: 0 3px 14px rgba(0,0,0,0.06); }
+  .comp:nth-child(odd)  { border-left: 4px solid var(--rojo); }
+  .comp:nth-child(even) { border-left: 4px solid var(--azul); }
+  .comp .cn { font-size: 20px; font-weight: 900; line-height: 1; flex-shrink: 0; }
+  .comp:nth-child(odd)  .cn { color: var(--rojo); }
+  .comp:nth-child(even) .cn { color: var(--azul); }
+  .comp h4 { font-size: 13px; font-weight: 800; color: var(--oscuro); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .comp p { font-size: 12px; color: #666; line-height: 1.5; }
+
+  .s13 { background: var(--azul); flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 80px; position: relative; overflow: hidden; }
+  .s13::before { content: 'C'; position: absolute; font-size: 380px; font-weight: 900; color: rgba(255,255,255,0.04); top: 50%; left: 50%; transform: translate(-50%,-50%); pointer-events: none; }
+  .s13 h2 { font-size: 48px; font-weight: 900; color: #fff; text-transform: uppercase; margin-bottom: 8px; position: relative; }
+  .s13 .sub { font-size: 13px; color: rgba(255,255,255,0.45); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 40px; position: relative; }
+  .cap-roles { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; max-width: 840px; width: 100%; position: relative; }
+  .cap { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: 16px; padding: 26px 18px; }
+  .cap .ci { font-size: 34px; margin-bottom: 10px; }
+  .cap h4 { font-size: 13px; font-weight: 800; color: var(--dorado); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .cap p { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.5; }
+
+  .s14 { background: var(--oscuro); flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 80px; }
+  .s14 h2 { font-size: 44px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+  .s14 h2 em { color: var(--dorado); font-style: normal; }
+  .s14 .sub { font-size: 13px; color: rgba(255,255,255,0.35); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 40px; }
+  .entren-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; max-width: 880px; width: 100%; }
+  .ec { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 26px 14px; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .ec .ei { font-size: 30px; }
+  .ec .ev { font-size: 26px; font-weight: 900; color: var(--dorado); }
+  .ec .el { font-size: 11px; color: rgba(255,255,255,0.45); text-transform: uppercase; letter-spacing: 1.5px; text-align: center; }
+  .nota-e { margin-top: 26px; background: rgba(200,16,46,0.18); border: 1px solid rgba(200,16,46,0.35); border-radius: 10px; padding: 14px 26px; max-width: 600px; font-size: 13px; color: rgba(255,255,255,0.75); line-height: 1.6; }
+  .nota-e strong { color: var(--dorado); }
+
+  .s15 { background: linear-gradient(135deg, var(--rojo), var(--azul)); flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px 80px; position: relative; overflow: hidden; }
+  .s15::before { content: ''; position: absolute; width: 650px; height: 650px; border-radius: 50%; border: 90px solid rgba(255,255,255,0.04); top: -200px; right: -180px; pointer-events: none; }
+  .s15 .etiqueta { font-size: 13px; color: var(--dorado); font-weight: 700; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 18px; }
+  .s15 .frase { font-size: 44px; font-weight: 900; color: #fff; line-height: 1.2; max-width: 800px; margin-bottom: 40px; }
+  .s15 .frase em { color: var(--dorado); font-style: normal; }
+  .ecuacion { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .eq-item { background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.2); border-radius: 10px; padding: 13px 20px; font-size: 15px; font-weight: 700; color: #fff; }
+  .eq-op { font-size: 24px; color: var(--dorado); font-weight: 900; }
+  .eq-res { background: var(--dorado); color: #000; font-weight: 900; font-size: 16px; padding: 13px 26px; border-radius: 10px; }
+
+  .s16 { background: var(--oscuro); flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 60px; position: relative; overflow: hidden; }
+  .s16::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(200,16,46,0.14) 0%, transparent 68%); pointer-events: none; }
+  .s16 img { width: 100px; margin-bottom: 26px; position: relative; filter: drop-shadow(0 6px 28px rgba(200,16,46,0.45)); }
+  .s16 .frase { font-size: 42px; font-weight: 900; color: #fff; line-height: 1.2; max-width: 700px; position: relative; margin-bottom: 18px; }
+  .s16 .frase em { color: var(--rojo); font-style: normal; }
+  .s16 .sub { font-size: 17px; color: rgba(255,255,255,0.4); font-style: italic; position: relative; margin-bottom: 32px; }
+  .s16 .firma { font-size: 12px; color: rgba(255,255,255,0.22); letter-spacing: 3px; text-transform: uppercase; position: relative; }
+  .s16 .firma em { color: var(--dorado); font-style: normal; font-weight: 700; }
+
+  .s17, .s18, .s21 { flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 46px 80px; }
+  .s17 { background: #fff; }
+  .s18 { background: #f5f5f5; }
+  .s21 { background: var(--azul); }
+  .s17 h2, .s18 h2 { font-size: 44px; font-weight: 900; color: var(--oscuro); margin-bottom: 8px; }
+  .s21 h2 { font-size: 44px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+  .s17 h2 em { color: var(--azul); font-style: normal; }
+  .s18 h2 em { color: var(--rojo); font-style: normal; }
+  .s21 h2 em { color: var(--dorado); font-style: normal; }
+  .s17 .sub, .s18 .sub { font-size: 13px; color: #aaa; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
+  .s21 .sub { font-size: 13px; color: rgba(255,255,255,0.45); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 30px; }
+
+  .tac-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; max-width: 1000px; width: 100%; }
+  .tac-card { background: #f9f9f9; border-radius: 14px; padding: 22px 16px; border-top: 4px solid var(--azul); box-shadow: 0 4px 14px rgba(0,0,0,0.06); text-align: left; }
+  .tac-card.tc2 { border-top-color: var(--rojo); }
+  .tac-card.tc3 { border-top-color: var(--dorado); }
+  .tac-card.tc4 { border-top-color: var(--oscuro); }
+  .tac-card .tac-ico { font-size: 28px; margin-bottom: 10px; }
+  .tac-card h4 { font-size: 14px; font-weight: 800; color: var(--oscuro); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
+  .tac-card p { font-size: 13px; color: #666; line-height: 1.55; }
+  .tac-nota { margin-top: 18px; background: rgba(0,48,135,0.07); border: 1px solid rgba(0,48,135,0.18); border-radius: 10px; padding: 12px 22px; font-size: 14px; color: #444; max-width: 760px; line-height: 1.6; }
+  .tac-nota strong { color: var(--azul); }
+
+  .mov-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; max-width: 900px; width: 100%; }
+  .mov-item { background: #fff; border-radius: 12px; padding: 20px 22px; display: flex; align-items: flex-start; gap: 16px; box-shadow: 0 4px 14px rgba(0,0,0,0.06); border-left: 4px solid var(--rojo); text-align: left; }
+  .mov-item:nth-child(even) { border-left-color: var(--azul); }
+  .mov-num { font-size: 28px; font-weight: 900; line-height: 1; flex-shrink: 0; color: var(--rojo); }
+  .mov-item:nth-child(even) .mov-num { color: var(--azul); }
+  .mov-texto h4 { font-size: 14px; font-weight: 800; color: var(--oscuro); text-transform: uppercase; margin-bottom: 4px; letter-spacing: 0.5px; }
+  .mov-texto p { font-size: 13px; color: #666; line-height: 1.5; }
+
+  .s19, .s20 { flex-direction: column; align-items: center; justify-content: center; padding: 40px 80px; }
+  .s19 { background: var(--oscuro); }
+  .s20 { background: linear-gradient(135deg, #111, #1e1e2e); }
+  .s19 h2, .s20 h2 { font-size: 42px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+  .s19 h2 em { color: var(--dorado); font-style: normal; }
+  .s20 h2 em { color: var(--rojo); font-style: normal; }
+  .s19 .sub, .s20 .sub { font-size: 13px; color: rgba(255,255,255,0.4); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 22px; }
+  .video-wrap { width: 100%; max-width: 860px; aspect-ratio: 16/9; border-radius: 14px; overflow: hidden; box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
+  .video-wrap iframe { width: 100%; height: 100%; border: none; }
+  .video-nota { margin-top: 16px; font-size: 14px; color: rgba(255,255,255,0.6); max-width: 700px; line-height: 1.5; }
+  .video-nota strong { color: var(--dorado); }
+
+  .deberes-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; max-width: 1000px; width: 100%; }
+  .deber-card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: 14px; padding: 24px 16px; text-align: center; }
+  .deber-ico { font-size: 32px; margin-bottom: 12px; }
+  .deber-card h4 { font-size: 13px; font-weight: 800; color: var(--dorado); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .deber-card p { font-size: 13px; color: rgba(255,255,255,0.7); line-height: 1.5; }
+
+  .s22 { background: linear-gradient(135deg, var(--oscuro), #2a2a2a); flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 50px 80px; position: relative; overflow: hidden; }
+  .s22::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at center, rgba(0,48,135,0.2) 0%, transparent 70%); pointer-events: none; }
+  .s22 h2 { font-size: 44px; font-weight: 900; color: #fff; margin-bottom: 8px; position: relative; }
+  .s22 h2 em { color: var(--dorado); font-style: normal; }
+  .s22 .sub { font-size: 13px; color: rgba(255,255,255,0.4); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 36px; position: relative; }
+  .out-fases { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; max-width: 1000px; width: 100%; position: relative; }
+  .out-fase { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 24px 16px; text-align: center; }
+  .out-fase.of1 { border-top: 3px solid var(--dorado); }
+  .out-fase.of2 { border-top: 3px solid var(--rojo); }
+  .out-fase.of3 { border-top: 3px solid var(--azul); }
+  .out-fase.of4 { border-top: 3px solid #4caf50; }
+  .out-fase .of-ico { font-size: 30px; margin-bottom: 10px; }
+  .out-fase h4 { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .out-fase.of1 h4 { color: var(--dorado); }
+  .out-fase.of2 h4 { color: #ff6b6b; }
+  .out-fase.of3 h4 { color: #6b9fff; }
+  .out-fase.of4 h4 { color: #4caf50; }
+  .out-fase p { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.5; }
+  .out-fecha { margin-top: 20px; position: relative; background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.3); border-radius: 10px; padding: 12px 22px; font-size: 14px; color: rgba(255,255,255,0.8); max-width: 620px; }
+  .out-fecha strong { color: var(--dorado); }
+
+  .s23 { background: #fff; flex-direction: row; overflow: hidden; }
+  .s23 .panel-izq { width: 340px; flex-shrink: 0; background: linear-gradient(160deg, var(--azul), #001f5c); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 36px; text-align: center; gap: 16px; }
+  .s23 .panel-izq .big-num { font-size: 80px; font-weight: 900; color: var(--dorado); line-height: 1; }
+  .s23 .panel-izq .big-label { font-size: 13px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 2px; }
+  .s23 .panel-izq .fechas { font-size: 14px; color: rgba(255,255,255,0.8); line-height: 1.7; margin-top: 10px; }
+  .s23 .panel-izq .fechas strong { color: var(--dorado); }
+  .s23 .contenido { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 50px 60px; gap: 14px; }
+  .s23 h2 { font-size: 42px; font-weight: 900; color: var(--oscuro); margin-bottom: 6px; }
+  .s23 h2 em { color: var(--azul); font-style: normal; }
+  .s23 .sub { font-size: 13px; color: #aaa; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
+  .tuto-items { display: flex; flex-direction: column; gap: 12px; max-width: 540px; }
+  .tuto-item { background: #f8f8f8; border-radius: 12px; padding: 16px 20px; display: flex; align-items: flex-start; gap: 14px; border-left: 4px solid var(--azul); }
+  .tuto-item:nth-child(even) { border-left-color: var(--rojo); }
+  .tuto-item .ti-ico { font-size: 22px; flex-shrink: 0; }
+  .tuto-item h4 { font-size: 13px; font-weight: 800; color: var(--oscuro); text-transform: uppercase; margin-bottom: 3px; }
+  .tuto-item p { font-size: 12px; color: #666; line-height: 1.5; }
+
+  .s24 { background: #f5f5f5; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 50px 80px; }
+  .s24 h2 { font-size: 44px; font-weight: 900; color: var(--oscuro); margin-bottom: 8px; }
+  .s24 h2 em { color: var(--rojo); font-style: normal; }
+  .s24 .sub { font-size: 13px; color: #aaa; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 36px; }
+  .ejerc-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; max-width: 920px; width: 100%; }
+  .ejerc-card { background: #fff; border-radius: 14px; padding: 26px 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.07); text-align: left; }
+  .ejerc-card.ec1 { border-top: 4px solid var(--rojo); }
+  .ejerc-card.ec2 { border-top: 4px solid var(--azul); }
+  .ejerc-card.ec3 { border-top: 4px solid var(--dorado); }
+  .ejerc-card .ej-ico { font-size: 28px; margin-bottom: 10px; }
+  .ejerc-card h4 { font-size: 14px; font-weight: 800; color: var(--oscuro); text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px; }
+  .ejerc-card p { font-size: 13px; color: #666; line-height: 1.55; }
+  .ejerc-card .ej-badge { display: inline-block; margin-top: 10px; border-radius: 20px; padding: 4px 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .ejerc-card.ec1 .ej-badge { background: rgba(200,16,46,0.08); border: 1px solid rgba(200,16,46,0.2); color: var(--rojo); }
+  .ejerc-card.ec2 .ej-badge { background: rgba(0,48,135,0.08); border: 1px solid rgba(0,48,135,0.2); color: var(--azul); }
+  .ejerc-card.ec3 .ej-badge { background: rgba(201,168,76,0.1); border: 1px solid rgba(201,168,76,0.3); color: #8a6e1f; }
+  .ejerc-nota { margin-top: 20px; background: #fff; border: 2px dashed var(--rojo); border-radius: 12px; padding: 14px 26px; max-width: 780px; font-size: 14px; color: #444; line-height: 1.6; }
+  .ejerc-nota strong { color: var(--rojo); }
+
+  .s25 { background: var(--azul); flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 50px 80px; position: relative; overflow: hidden; }
+  .s25::before { content: ''; position: absolute; width: 500px; height: 500px; border-radius: 50%; background: rgba(255,255,255,0.04); top: -180px; right: -100px; pointer-events: none; }
+  .s25 h2 { font-size: 44px; font-weight: 900; color: #fff; margin-bottom: 8px; position: relative; }
+  .s25 h2 em { color: var(--dorado); font-style: normal; }
+  .s25 .sub { font-size: 13px; color: rgba(255,255,255,0.45); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 36px; position: relative; }
+  .act-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; max-width: 1000px; width: 100%; position: relative; }
+  .act-card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14); border-radius: 14px; padding: 24px 14px; text-align: center; transition: transform 0.2s; }
+  .act-card:hover { transform: translateY(-4px); }
+  .act-card .ac-ico { font-size: 36px; margin-bottom: 12px; }
+  .act-card h4 { font-size: 13px; font-weight: 800; color: var(--dorado); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .act-card p { font-size: 12px; color: rgba(255,255,255,0.65); line-height: 1.5; }
+  .act-mensaje { margin-top: 20px; position: relative; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 12px 22px; font-size: 14px; color: rgba(255,255,255,0.8); max-width: 680px; line-height: 1.6; }
+  .act-mensaje strong { color: var(--dorado); }
+
+  .s26 {
+    background: linear-gradient(135deg, var(--azul) 0%, #001f5c 50%, var(--oscuro) 100%);
+    flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; overflow: hidden; position: relative;
+  }
+  .s26 img { width: 100px; margin-bottom: 22px; filter: drop-shadow(0 6px 20px rgba(0,0,0,0.5)); position: relative; }
+  .s26 .club { font-size: 12px; letter-spacing: 4px; color: rgba(255,255,255,0.35); text-transform: uppercase; margin-bottom: 10px; position: relative; }
+  .s26 h1 { font-size: 90px; font-weight: 900; color: #fff; text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 4px 20px rgba(0,0,0,0.4); line-height: 1; position: relative; }
+  .s26 .linea { margin: 18px auto; position: relative; }
+  .s26 .temp { font-size: 20px; color: rgba(255,255,255,0.55); font-weight: 300; letter-spacing: 2px; font-style: italic; position: relative; }
+  .s26 .tec { margin-top: 28px; font-size: 13px; color: rgba(255,255,255,0.35); letter-spacing: 2px; text-transform: uppercase; position: relative; }
+  .s26 .tec strong { color: var(--dorado); }
+</style>
+</head>
+<body>
+
+<div class="slide s1 active">
+  <div class="c1"></div>
+  <div class="c2"></div>
+  <img src="escudo.png" alt="Escudo Terrassa FC">
+  <div class="club">Terrassa FC · Fútbol Femenino</div>
+  <h1>Juvenil C</h1>
+  <div class="linea"></div>
+  <div class="temp">TEMPORADA 26/27</div>
+  <div class="tec">Técnico: <strong>Lucio Mongelli Gutés</strong></div>
+</div>
+
+<div class="slide s2">
+  <div class="br"></div>
+  <div class="ba"></div>
+  <div class="texto">
+    <span class="tag tag-rojo">Bienvenida</span>
+    <h2>Hola,<br><em>bienvenidas.</em></h2>
+    <p>Este año empieza algo nuevo. Una temporada donde vamos a trabajar duro, crecer juntas y demostrar de qué estamos hechas.<br><br><strong>El fútbol es un juego, hay que divertirse siempre.</strong></p>
+    <div class="firma">— <strong>Lucio Mongelli Gutés</strong>, Entrenador Terrassa FC Juvenil C</div>
+  </div>
+  <div class="panel">
+    <img src="escudo.png" alt="Escudo">
+  </div>
+</div>
+
+<div class="slide s3">
+  <div class="c1"></div>
+  <span class="tag tag-azul">El equipo</span>
+  <h2>Somos el Terrassa FC</h2>
+  <div class="sub">Juvenil C · Temporada 26/27</div>
+  <div class="cards">
+    <div class="card"><div class="n">20</div><div class="l">Jugadoras</div></div>
+    <div class="card"><div class="n">1</div><div class="l">Objetivo común</div></div>
+    <div class="card"><div class="n">26/27</div><div class="l">Nuestra temporada</div></div>
+  </div>
+</div>
+
+<div class="slide s4">
+  <span class="tag tag-azul">Temporada 2027-28</span>
+  <h2>Nueva <em>estructura de ligas</em></h2>
+  <div class="sub">Se reorganizan las categorías · Más plazas de ascenso</div>
+  <div class="piramide">
+    <div class="nivel dh">
+      <div><div class="nn">🏆 División de Honor</div><div class="nd">Máxima categoría</div></div>
+      <div class="num">1</div>
+    </div>
+    <div class="nivel pref">
+      <div><div class="nn">⭐ Preferente</div><div class="nd">Segunda categoría</div></div>
+      <div class="num">3</div>
+    </div>
+    <div class="nivel prim">
+      <div><div class="nn">🔵 Primera</div><div class="nd">Tercera categoría</div></div>
+      <div class="num">6</div>
+    </div>
+  </div>
+  <div class="nota-est">Con la nueva estructura hay <strong>más plazas de ascenso</strong> y más equipos compitiendo en las mejores divisiones. La temporada <strong>26/27 es clave</strong> para posicionarse bien.</div>
+</div>
+
+<div class="slide s5">
+  <span class="tag tag-rojo">Objetivo Terrassa FC</span>
+  <h2>Nuestros <em>objetivos de ascenso</em></h2>
+  <div class="sub">El club quiere los tres equipos en lo más alto</div>
+  <div class="obj-grid">
+    <div class="obj ja">
+      <div class="etq">Juvenil A</div>
+      <div class="nom">Terrassa FC JA</div>
+      <div class="flecha">↑</div>
+      <div class="meta">División de Honor</div>
+      <div class="desc">Ascenso directo a la máxima categoría</div>
+    </div>
+    <div class="obj jb">
+      <div class="etq">Juvenil B</div>
+      <div class="nom">Terrassa FC JB</div>
+      <div class="flecha">↑</div>
+      <div class="meta">Preferente</div>
+      <div class="desc">Subir a la segunda categoría del nuevo sistema</div>
+    </div>
+    <div class="obj jc">
+      <div class="etq">Juvenil C · Nosotras</div>
+      <div class="nom">Terrassa FC JC</div>
+      <div class="flecha">↑</div>
+      <div class="meta">Primera</div>
+      <div class="desc">Quedando entre las 3 primeras, grandes posibilidades de ascender</div>
+    </div>
+  </div>
+  <div class="clave">🎯 <strong>La clave:</strong> quedar entre las <strong>3 primeras</strong> nos pone en posición directa de ascenso a Primera. Ese es nuestro objetivo deportivo esta temporada.</div>
+</div>
+
+<div class="slide s6">
+  <span class="tag tag-rojo">Nuestra filosofía</span>
+  <h2>Tres <em>pilares</em></h2>
+  <div class="sub">Todo lo que hagamos girará en torno a esto</div>
+  <div class="pilares">
+    <div class="pilar p1">
+      <div class="ico">⚔️</div>
+      <h3>Aprender a Competir</h3>
+      <p>Saber tener un rol, ganarse los minutos, compromiso y actitud dentro y fuera del campo.</p>
+    </div>
+    <div class="pilar p2">
+      <div class="ico">🧠</div>
+      <h3>Aprender</h3>
+      <p>Dominar varias posiciones, entender sistemas tácticos y ver el fútbol desde una nueva perspectiva.</p>
+    </div>
+    <div class="pilar p3">
+      <div class="ico">❤️</div>
+      <h3>Disfrutar</h3>
+      <p>Cuando se compite en alto nivel, el fútbol se disfruta más. Ser compañeras, ser un equipo.</p>
+    </div>
+  </div>
+</div>
+
+<div class="slide pilar-slide ps1">
+  <div class="num-bg">01</div>
+  <span class="tag tag-dorado">Pilar 01</span>
+  <h2>Aprender a<br>Competir</h2>
+  <div class="sub">Lo que nos va a hacer crecer como jugadoras</div>
+  <div class="pills">
+    <div class="pill"><div class="dot"></div><span>Saber tener un rol</span></div>
+    <div class="pill"><div class="dot"></div><span>Ganarse los minutos</span></div>
+    <div class="pill"><div class="dot"></div><span>Compromiso total</span></div>
+    <div class="pill"><div class="dot"></div><span>Actitud siempre</span></div>
+  </div>
+</div>
+
+<div class="slide pilar-slide ps2">
+  <div class="num-bg">02</div>
+  <span class="tag tag-dorado">Pilar 02</span>
+  <h2>Aprender</h2>
+  <div class="sub">Entender el fútbol desde otra perspectiva</div>
+  <div class="pills">
+    <div class="pill"><div class="dot"></div><span>Más de una posición</span></div>
+    <div class="pill"><div class="dot"></div><span>Conceptos tácticos nuevos</span></div>
+    <div class="pill"><div class="dot"></div><span>Varios sistemas tácticos</span></div>
+    <div class="pill"><div class="dot"></div><span>Explotar nuestras virtudes</span></div>
+  </div>
+</div>
+
+<div class="slide pilar-slide ps3">
+  <div class="num-bg">03</div>
+  <span class="tag tag-rojo">Pilar 03</span>
+  <h2>Disfrutar</h2>
+  <div class="sub">Porque para eso jugamos al fútbol</div>
+  <div class="frase-box">
+    <p>Si competimos en alto nivel,<br><strong>el fútbol se disfruta más.</strong></p>
+  </div>
+  <div class="pills">
+    <div class="pill"><div class="dot"></div><span>Ser compañeras de verdad</span></div>
+    <div class="pill"><div class="dot"></div><span>Un equipo dentro del campo</span></div>
+    <div class="pill"><div class="dot"></div><span>Un equipo fuera del campo</span></div>
+    <div class="pill"><div class="dot"></div><span>Disfrutar del proceso</span></div>
+  </div>
+</div>
+
+<div class="slide s10">
+  <span class="tag tag-azul">Identidad</span>
+  <h2>Nuestros <em>valores</em></h2>
+  <div class="sub">Lo que nos define como equipo</div>
+  <div class="valores">
+    <div class="val"><div class="vi">🤝</div><div class="vn">Compañerismo</div></div>
+    <div class="val"><div class="vi">🏅</div><div class="vn">Fair Play</div></div>
+    <div class="val"><div class="vi">🔥</div><div class="vn">Actitud</div></div>
+    <div class="val"><div class="vi">💪</div><div class="vn">Sacrificio</div></div>
+    <div class="val"><div class="vi">⏳</div><div class="vn">Constancia</div></div>
+  </div>
+</div>
+
+<div class="slide s11">
+  <div class="izq">
+    <span class="tag tag-dorado">Vuestro entrenador</span>
+    <h2>El Técnico</h2>
+    <div class="nombre">Lucio Mongelli Gutés</div>
+    <div class="frase">
+      <strong>El fútbol es un juego,<br>hay que divertirse siempre.</strong><br><br>
+      Estoy aquí para guiaros.<br>
+      Dentro y fuera del campo.<br><br>
+      Cualquier duda, problema o inquietud —<br>
+      <strong>venid a mí.</strong> Para eso estoy.
+    </div>
+  </div>
+  <div class="der">
+    <img src="escudo.png" alt="Escudo Terrassa FC">
+    <div class="rol">Entrenador Principal<br>Terrassa FC Juvenil C</div>
+  </div>
+</div>
+
+<div class="slide s12">
+  <span class="tag tag-rojo">Normas de convivencia</span>
+  <h2>Nuestros <em>compromisos</em></h2>
+  <div class="sub">Las bases sobre las que vamos a construir este equipo</div>
+  <div class="compromisos">
+    <div class="comp"><div class="cn">01</div><div><h4>Respeto absoluto</h4><p>No se toleran faltas de respeto hacia el staff ni hacia las compañeras. Sin excepciones.</p></div></div>
+    <div class="comp"><div class="cn">02</div><div><h4>Primero se hace, luego se habla</h4><p>Si algo no te gusta, primero lo ejecutas y después lo comunicás en privado con el entrenador.</p></div></div>
+    <div class="comp"><div class="cn">03</div><div><h4>Puntualidad</h4><p>Llegar a tiempo es una muestra de respeto hacia tus compañeras y el equipo técnico.</p></div></div>
+    <div class="comp"><div class="cn">04</div><div><h4>Entrega en los entrenamientos</h4><p>Es donde más os voy a exigir. Aquí es donde se ganan los minutos de partido.</p></div></div>
+    <div class="comp"><div class="cn">05</div><div><h4>Comunicación directa</h4><p>Cualquier problema o duda, hablad conmigo. Soy vuestra referencia dentro y fuera del campo.</p></div></div>
+    <div class="comp"><div class="cn">06</div><div><h4>Compromiso de equipo</h4><p>Lo que afecta a una, nos afecta a todas. Somos un equipo, no 20 jugadoras individuales.</p></div></div>
+  </div>
+</div>
+
+<div class="slide s13">
+  <span class="tag tag-dorado">Liderazgo</span>
+  <h2>La Capitana</h2>
+  <div class="sub">Un rol con responsabilidad real dentro del equipo</div>
+  <div class="cap-roles">
+    <div class="cap"><div class="ci">📢</div><h4>Voz del equipo</h4><p>Traslada las quejas y propuestas del grupo al entrenador. Portavoz en todo momento.</p></div>
+    <div class="cap"><div class="ci">🔁</div><h4>Puente bidireccional</h4><p>También transmite los mensajes del entrenador al equipo cuando sea necesario.</p></div>
+    <div class="cap"><div class="ci">🛡️</div><h4>Referente dentro y fuera</h4><p>Su liderazgo no acaba en el campo. Es ejemplo de valores, actitud y compromiso.</p></div>
+  </div>
+</div>
+
+<div class="slide s14">
+  <span class="tag tag-rojo">Planificación</span>
+  <h2>Los <em>entrenamientos</em></h2>
+  <div class="sub">Donde se construye todo lo demás</div>
+  <div class="entren-grid">
+    <div class="ec"><div class="ei">📅</div><div class="ev">3</div><div class="el">Días por semana</div></div>
+    <div class="ec"><div class="ei">⏱️</div><div class="ev">1h15</div><div class="el">Por sesión</div></div>
+    <div class="ec"><div class="ei">🏟️</div><div class="ev">Estadio</div><div class="el">Terrassa FC</div></div>
+    <div class="ec"><div class="ei">🎥</div><div class="ev">+Extra</div><div class="el">Físico y vídeo</div></div>
+  </div>
+  <div class="nota-e"><strong>📌 Algunos días</strong> quedaremos antes del entrenamiento para sesiones de preparación física y análisis de vídeo. Se avisará con antelación.</div>
+</div>
+
+<div class="slide s15">
+  <div class="etiqueta">La consecuencia de todo esto</div>
+  <div class="frase">Si competimos, aprendemos y disfrutamos,<br><em>los resultados llegan solos.</em></div>
+  <div class="ecuacion">
+    <div class="eq-item">⚔️ Competir</div>
+    <div class="eq-op">+</div>
+    <div class="eq-item">🧠 Aprender</div>
+    <div class="eq-op">+</div>
+    <div class="eq-item">❤️ Disfrutar</div>
+    <div class="eq-op">=</div>
+    <div class="eq-res">🏆 Resultados</div>
+  </div>
+</div>
+
+<div class="slide s16">
+  <img src="escudo.png" alt="Escudo Terrassa FC">
+  <div class="frase">Este año lo damos <em>todo</em>.<br>Juntas.</div>
+  <div class="sub">"El fútbol es un juego, hay que divertirse siempre."</div>
+  <div class="firma">Terrassa FC Juvenil C · <em>Temporada 26/27</em> · Lucio Mongelli Gutés</div>
+</div>
+
+<div class="slide s17">
+  <span class="tag tag-azul">Concepto táctico 01</span>
+  <h2>Los <em>espacios</em></h2>
+  <div class="sub">El arma más importante que existe sin balón</div>
+  <div class="tac-grid">
+    <div class="tac-card tc1">
+      <div class="tac-ico">📐</div>
+      <h4>¿Qué es un espacio?</h4>
+      <p>Una zona del campo libre de rivales donde podemos recibir, progresar o crear superioridad.</p>
+    </div>
+    <div class="tac-card tc2">
+      <div class="tac-ico">🎯</div>
+      <h4>Espacio entre líneas</h4>
+      <p>El hueco entre la defensa y el centro del rival. El más peligroso y el más difícil de encontrar.</p>
+    </div>
+    <div class="tac-card tc3">
+      <div class="tac-ico">💨</div>
+      <h4>Espacio a la espalda</h4>
+      <p>Detrás de la línea defensiva rival. Se ataca con timing y velocidad. Requiere coordinación.</p>
+    </div>
+    <div class="tac-card tc4">
+      <div class="tac-ico">↔️</div>
+      <h4>Espacio en banda</h4>
+      <p>Los carriles exteriores. Fundamentales para generar amplitud y desorganizar al rival.</p>
+    </div>
+  </div>
+  <div class="tac-nota">💡 <strong>Clave:</strong> los espacios no se esperan — <strong>se generan</strong> con movimiento, inteligencia y coordinación con las compañeras.</div>
+</div>
+
+<div class="slide s18">
+  <span class="tag tag-rojo">Concepto táctico 02</span>
+  <h2>Movimientos <em>sin balón</em></h2>
+  <div class="sub">Donde se gana o se pierde el partido antes de tocar la pelota</div>
+  <div class="mov-grid">
+    <div class="mov-item">
+      <div class="mov-num">01</div>
+      <div class="mov-texto">
+        <h4>Desmarque de ruptura</h4>
+        <p>Movimiento en profundidad a la espalda del rival. Requiere timing perfecto con la compañera que tiene el balón.</p>
+      </div>
+    </div>
+    <div class="mov-item">
+      <div class="mov-num">02</div>
+      <div class="mov-texto">
+        <h4>Desmarque de apoyo</h4>
+        <p>Ofrecer una línea de pase cercana para dar salida a la compañera. Fundamental en la construcción.</p>
+      </div>
+    </div>
+    <div class="mov-item">
+      <div class="mov-num">03</div>
+      <div class="mov-texto">
+        <h4>Arrastre</h4>
+        <p>Moverte para llevarte a un rival contigo y liberar el espacio para una compañera. El movimiento más inteligente.</p>
+      </div>
+    </div>
+    <div class="mov-item">
+      <div class="mov-num">04</div>
+      <div class="mov-texto">
+        <h4>Crear líneas de pase</h4>
+        <p>Posicionarte para que la compañera siempre tenga opciones. El equipo juega mejor cuando todas se mueven.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide s19">
+  <span class="tag tag-azul">Vídeo ejemplo 01</span>
+  <h2>Espacios en <em>el juego real</em></h2>
+  <div class="sub">Observa cómo se generan y se atacan los espacios</div>
+  <div class="video-wrap">
+    <iframe src="PENDIENTE_URL_1" title="Espacios en el fútbol" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div class="video-nota">📌 Fíjate en los movimientos <strong>antes</strong> de que llegue el balón.</div>
+</div>
+
+<div class="slide s20">
+  <span class="tag tag-rojo">Vídeo ejemplo 02</span>
+  <h2>Movimientos sin balón <em>en acción</em></h2>
+  <div class="sub">Desmarques, arrastres y creación de espacios reales</div>
+  <div class="video-wrap">
+    <iframe src="PENDIENTE_URL_2" title="Movimientos sin balón" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div class="video-nota">📌 Observa cómo cada movimiento tiene un <strong>propósito</strong> para el equipo.</div>
+</div>
+
+<div class="slide s21">
+  <span class="tag tag-dorado">Tarea</span>
+  <h2>Vuestros <em>deberes</em></h2>
+  <div class="sub">Antes del primer entrenamiento · Mundial 2026</div>
+  <div class="deberes-grid">
+    <div class="deber-card">
+      <div class="deber-ico">📺</div>
+      <h4>Ve un partido del Mundial</h4>
+      <p>Cualquier partido vale. No hace falta que sea el mejor, hace falta que lo veas con otro ojo.</p>
+    </div>
+    <div class="deber-card">
+      <div class="deber-ico">📐</div>
+      <h4>Observa los espacios</h4>
+      <p>¿Dónde aparecen los espacios? ¿Quién los genera? ¿Cómo los ataca el equipo?</p>
+    </div>
+    <div class="deber-card">
+      <div class="deber-ico">🏃‍♀️</div>
+      <h4>Fíjate en los movimientos</h4>
+      <p>Elige una jugadora y síguela 10 minutos. ¿Cuántas veces se mueve sin tener el balón?</p>
+    </div>
+    <div class="deber-card">
+      <div class="deber-ico">💬</div>
+      <h4>Trae una reflexión</h4>
+      <p>Algo que hayas visto y que te haya llamado la atención. Lo comentamos juntas en el primer entreno.</p>
+    </div>
+  </div>
+  <div class="tac-nota" style="margin-top:20px; background:rgba(255,255,255,0.1); border-color:rgba(255,255,255,0.2); color:#fff;">
+    🌍 <strong style="color:var(--dorado);">El Mundial es el mejor aula del mundo.</strong> Aprovéchadlo.
+  </div>
+</div>
+
+<div class="slide s22">
+  <span class="tag tag-dorado">Fuera de temporada</span>
+  <h2>El plan del <em>Outseason</em></h2>
+  <div class="sub">Del 19 de junio hasta la pretemporada 26/27</div>
+  <div class="out-fases">
+    <div class="out-fase of1">
+      <div class="of-ico">🤝</div>
+      <h4>Tutorías</h4>
+      <p>Reuniones personales de 5 en 5. Charla individual y pruebas físicas iniciales.</p>
+    </div>
+    <div class="out-fase of2">
+      <div class="of-ico">🏋️‍♀️</div>
+      <h4>Ejercicios</h4>
+      <p>Plan de trabajo individual durante el verano con seguimiento por app.</p>
+    </div>
+    <div class="out-fase of3">
+      <div class="of-ico">⛰️</div>
+      <h4>Actividades</h4>
+      <p>Propuestas semanales para mantenernos activas y seguir haciendo equipo.</p>
+    </div>
+    <div class="out-fase of4">
+      <div class="of-ico">📊</div>
+      <h4>Evaluación</h4>
+      <p>Al volver repetimos las pruebas y analizamos la evolución de cada jugadora.</p>
+    </div>
+  </div>
+  <div class="out-fecha">
+    📅 <strong>Último entrenamiento: 19 de junio.</strong> La semana siguiente arrancamos con las tutorías y pruebas físicas.
+  </div>
+</div>
+
+<div class="slide s23">
+  <div class="panel-izq">
+    <div class="big-num">5</div>
+    <div class="big-label">Jugadoras por día</div>
+    <div class="fechas">
+      <strong>Inicio:</strong> semana del 22 de junio<br>
+      <strong>Cierre:</strong> al regreso del verano<br><br>
+      4 grupos · 4 días<br>
+      Sesión individual con el técnico
+    </div>
+  </div>
+  <div class="contenido">
+    <span class="tag tag-azul">Tutorías personales</span>
+    <h2>Nos sentamos<br><em>a hablar.</em></h2>
+    <div class="sub">Una a una. Sin filtros.</div>
+    <div class="tuto-items">
+      <div class="tuto-item">
+        <div class="ti-ico">💬</div>
+        <div>
+          <h4>Charla personal</h4>
+          <p>Cómo ha ido la temporada, cómo te sientes, qué esperas del año que viene. Espacio para hablar con total libertad.</p>
+        </div>
+      </div>
+      <div class="tuto-item">
+        <div class="ti-ico">⚖️</div>
+        <div>
+          <h4>Prueba de peso</h4>
+          <p>Registro inicial para tener una referencia al inicio del outseason y comparar al regreso.</p>
+        </div>
+      </div>
+      <div class="tuto-item">
+        <div class="ti-ico">🏃‍♀️</div>
+        <div>
+          <h4>Prueba de resistencia</h4>
+          <p>Test físico para evaluar en qué estado terminamos la temporada. Al volver lo repetimos y analizamos la evolución.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="slide s24">
+  <span class="tag tag-rojo">Trabajo individual</span>
+  <h2>Ejercicios del <em>verano</em></h2>
+  <div class="sub">Tu responsabilidad durante el outseason</div>
+  <div class="ejerc-grid">
+    <div class="ejerc-card ec1">
+      <div class="ej-ico">📋</div>
+      <h4>Plan de ejercicios</h4>
+      <p>Recibiréis un plan personalizado con los ejercicios a realizar durante el verano. Adaptado a cada jugadora.</p>
+      <span class="ej-badge">Próximamente</span>
+    </div>
+    <div class="ejerc-card ec2">
+      <div class="ej-ico">📱</div>
+      <h4>Seguimiento por app</h4>
+      <p>Algunos ejercicios requerirán que registréis los tiempos y resultados en una app de seguimiento.</p>
+      <span class="ej-badge">App por definir</span>
+    </div>
+    <div class="ejerc-card ec3">
+      <div class="ej-ico">📤</div>
+      <h4>Reporte al técnico</h4>
+      <p>Pasaréis el informe de la app directamente al entrenador para hacer seguimiento de vuestra evolución.</p>
+      <span class="ej-badge">Obligatorio</span>
+    </div>
+  </div>
+  <div class="ejerc-nota">
+    💪 <strong>El verano también es temporada.</strong> Las que trabajen durante el outseason lo notarán desde el primer día de pretemporada.
+  </div>
+</div>
+
+<div class="slide s25">
+  <span class="tag tag-azul">Equipo también en verano</span>
+  <h2>Actividades <em>semanales</em></h2>
+  <div class="sub">Para no perder el contacto con el deporte ni entre vosotras</div>
+  <div class="act-grid">
+    <div class="act-card">
+      <div class="ac-ico">⛰️</div>
+      <h4>Subir La Mola</h4>
+      <p>Ruta de montaña juntas. Esfuerzo físico, contacto con la naturaleza y equipo fuera del campo.</p>
+    </div>
+    <div class="act-card">
+      <div class="ac-ico">⚽</div>
+      <h4>Partido</h4>
+      <p>Partidos informales para mantenernos en contacto con el balón y disfrutar sin presión.</p>
+    </div>
+    <div class="act-card">
+      <div class="ac-ico">🏊‍♀️</div>
+      <h4>Otras actividades</h4>
+      <p>Propuestas que irán surgiendo. Paddle, natación, salidas... Lo importante es estar juntas.</p>
+    </div>
+    <div class="act-card">
+      <div class="ac-ico">🤝</div>
+      <h4>Hacer equipo</h4>
+      <p>El verano es donde se construyen los vínculos que luego se ven en el campo. No lo desaprovechéis.</p>
+    </div>
+  </div>
+  <div class="act-mensaje">
+    📅 <strong>Las propuestas se irán comunicando semana a semana.</strong> Participación voluntaria pero muy recomendada.
+  </div>
+</div>
+
+<div class="slide s26">
+  <div class="c1"></div>
+  <div class="c2"></div>
+  <img src="escudo.png" alt="Escudo Terrassa FC">
+  <div class="club">Terrassa FC · Juvenil C · Temporada 26/27</div>
+  <h1>¿Preguntas?</h1>
+  <div class="linea"></div>
+  <div class="temp">Estoy aquí para responderlas.</div>
+  <div class="tec"><strong>Lucio Mongelli Gutés</strong> · Entrenador Principal</div>
+</div>
+
+<div class="nav">
+  <button onclick="cambiar(-1)">← Anterior</button>
+  <button onclick="cambiar(1)">Siguiente →</button>
+</div>
+<div class="contador" id="cnt">1 / 26</div>
+
+<script>
+  let i = 0;
+  const s = document.querySelectorAll('.slide');
+  const t = s.length;
+  function cambiar(d) {
+    s[i].classList.remove('active');
+    i = (i + d + t) % t;
+    s[i].classList.add('active');
+    document.getElementById('cnt').textContent = (i+1) + ' / ' + t;
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') cambiar(1);
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')   cambiar(-1);
+  });
+</script>
+
+</body>
+</html>
